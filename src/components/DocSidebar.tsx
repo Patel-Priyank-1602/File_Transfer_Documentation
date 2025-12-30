@@ -94,13 +94,16 @@ const DocSidebar = ({ onNavigate }: DocSidebarProps) => {
           </button>
           
           {expandedCategories[category.category] && (
-            <div className="mt-1 space-y-0.5 animate-fade-in">
+            <div className="relative mt-1 space-y-0.5 animate-fade-in ml-4 pl-3">
+              {/* Vertical line - starts after the category header */}
+              <div className="absolute left-0 top-3 bottom-0 w-0.5 bg-border" />
+              
               {category.items.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleNavigate(item.id)}
                   className={cn(
-                    "nav-link w-full text-left",
+                    "nav-link w-full text-left relative",
                     currentSection === item.id && "active"
                   )}
                 >

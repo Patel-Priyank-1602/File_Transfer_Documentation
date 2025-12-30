@@ -185,9 +185,11 @@ const Landing = () => {
         <header className="border-b border-border/50 backdrop-blur-sm bg-background/80">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <Server className="h-5 w-5 text-primary-foreground" />
-              </div>
+                <img
+                  src="/logo.png"
+                  alt="FileTransfer Logo"
+                  className="h-9 w-9 object-contain"
+                />
               <span className="font-semibold text-lg">FileTransfer</span>
             </Link>
             <div className="flex items-center gap-2">

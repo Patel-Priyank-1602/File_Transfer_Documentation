@@ -27,9 +27,11 @@ const DocHeader = () => {
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="px-4 py-4 border-b border-sidebar-border">
                   <Link to="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                      <Server className="h-4 w-4 text-primary-foreground" />
-                    </div>
+                      <img
+                        src="/logo.png"
+                        alt="FileTransfer Logo"
+                        className="h-9 w-9 object-contain"
+                      />
                     <span className="font-semibold text-foreground">FileTransfer</span>
                   </Link>
                 </div>
@@ -40,6 +42,11 @@ const DocHeader = () => {
             </Sheet>
 
             <Link to="/" className="flex items-center gap-2">
+                      <img
+                        src="/logo.png"
+                        alt="FileTransfer Logo"
+                        className="h-9 w-9 object-contain"
+                      />
               <span className="font-semibold hidden sm:inline-block">FileTransfer</span>
             </Link>
           </div>
