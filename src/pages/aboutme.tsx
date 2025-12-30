@@ -142,7 +142,7 @@ const AboutMe = () => {
                                             </a>
                                         </Button>
                                         <Button variant="outline" size="sm" asChild>
-                                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                            <a href="https://www.linkedin.com/in/patel-priyank-945131288/" target="_blank" rel="noopener noreferrer" className="gap-2">
                                                 <Linkedin className="h-4 w-4" />
                                                 LinkedIn
                                             </a>
@@ -319,7 +319,7 @@ const AboutMe = () => {
                         <p>Copyright © {new Date().getFullYear()} Priyank Patel. All rights reserved.</p>
                         <div className="flex items-center gap-4">
                             <a href="https://github.com/Patel-Priyank-1602" className="hover:text-foreground transition-colors">GitHub</a>
-                            <a href="https://linkedin.com" className="hover:text-foreground transition-colors">LinkedIn</a>
+                            <a href="https://www.linkedin.com/in/patel-priyank-945131288/" className="hover:text-foreground transition-colors">LinkedIn</a>
                             <a href="mailto:patelpriyank2626@gmail.com" className="hover:text-foreground transition-colors">Email</a>
                         </div>
                     </div>
