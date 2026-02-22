@@ -29,6 +29,7 @@ export const navigation: { category: string; items: NavItem[] }[] = [
       { id: "architecture", title: "Architecture", icon: "Layers" },
       { id: "features", title: "Features", icon: "Zap" },
       { id: "file-transfer", title: "File Transfer", icon: "Upload" },
+      { id: "folder-upload", title: "Folder Upload", icon: "FolderUp" },
       { id: "security", title: "Security", icon: "Shield" },
     ],
   },
@@ -36,6 +37,8 @@ export const navigation: { category: string; items: NavItem[] }[] = [
     category: "Guides",
     items: [
       { id: "usage", title: "Usage Guide", icon: "BookOpen" },
+      { id: "join-permissions", title: "Join Permissions", icon: "UserCheck" },
+      { id: "file-browser", title: "File Browser", icon: "LayoutGrid" },
       { id: "search-engine", title: "Search Engine", icon: "Search" },
       { id: "admin", title: "Administration", icon: "UserCog" },
     ],
@@ -79,6 +82,9 @@ This system enables real-time file sharing, messaging, monitoring, and administr
 - **Administration Tools**: User moderation, file management, and activity logging
 - **Offline-First**: Fully functional without internet connectivity
 - **QR Onboarding**: Quick device setup via QR code scanning
+- **Access Control**: Client join permission system with approval/rejection workflow
+- **Folder Upload**: Upload entire folders (max 5 GB) with automatic ZIP compression
+- **File Browser**: Visual grid-based file management with search, sort, and type filtering
     `,
     subsections: [
       { id: "overview", title: "Overview" },
@@ -382,6 +388,7 @@ Comprehensive overview of all system capabilities.
 - **Multi-stream download**: HTTP range support enables parallel downloading
 - **Real-time progress tracking**: Live speed, ETA, and progress reporting during transfers
 - **Large file support** — Tested with files exceeding 10GB
+- **Folder upload support** — Upload entire folders (max 5 GB), automatically compressed to ZIP
 - **File audit dashboard**: Dedicated tracking panel to monitor and inspect any file’s complete history
 - **Data integrity validation**: Checksum verification ensures file integrity
 - **Per-file activity tracking**: Track each file’s complete lifecycle:
@@ -390,6 +397,22 @@ Comprehensive overview of all system capabilities.
   - File Size
   - How many times it was downloaded
   - Exact upload time and each download timestamp
+
+## Access Control
+
+- **Client join permission system**: Clients must enter their name and request approval before accessing the session
+- **Dashboard approval workflow**: Accept or reject join requests with a single click
+- **Audio notifications**: Dashboard receives sound alerts when new join requests arrive
+- **Request history**: Full log of all accepted and rejected join requests
+- **Kicked client re-approval**: Kicked clients must re-request access and be re-approved
+
+## File Browser
+
+- **Visual grid layout**: Browse uploaded files with color-coded file type icons
+- **Real-time search**: Instant file filtering by name as you type
+- **Sort options**: Sort by name, size, or date in ascending/descending order
+- **Type filtering**: Filter files by type (images, videos, documents, archives, audio)
+- **Role-based actions**: Dashboard gets download, info, and delete; clients get download and info only
 
 ## Collaboration
 
@@ -411,6 +434,8 @@ Comprehensive overview of all system capabilities.
     `,
     subsections: [
       { id: "file-transfer", title: "File Transfer" },
+      { id: "access-control", title: "Access Control" },
+      { id: "file-browser", title: "File Browser" },
       { id: "collaboration", title: "Collaboration" },
       { id: "administration", title: "Administration" },
     ],
@@ -451,6 +476,61 @@ Understanding how files move through the system from upload to download.
     subsections: [
       { id: "upload-process", title: "Upload Process" },
       { id: "download-process", title: "Download Process" },
+    ],
+  },
+  "folder-upload": {
+    id: "folder-upload",
+    title: "Upload",
+    icon: "FolderUp",
+    content: `
+# Folder Upload
+
+Upload entire folders as a single operation. The system automatically compresses your folder into a ZIP archive before uploading.
+
+## How It Works
+
+The Folder Upload feature allows you to upload complete directory structures to the server, not just individual files. When you select a folder, the following process occurs:
+
+1. **Select Upload Mode**: On the upload page, toggle between **File** and **Folder** mode using the switcher buttons
+2. **Choose a Folder**: Click the upload area to open the folder picker and select the folder you want to upload
+3. **Automatic Compression**: The system uses **JSZip** on the client side to read all files in the selected folder and compress them into a single \`.zip\` archive
+4. **Upload as ZIP**: The compressed ZIP file is then uploaded to the server using the same chunked, parallel upload pipeline as regular files
+5. **Server Storage**: The ZIP file is stored on the server and becomes available for download by all connected users
+
+## Size Limit
+
+The maximum total size for a folder upload is **5 GB**. This limit applies to the **original uncompressed folder contents**, not the final ZIP file size.
+
+- If the total size of all files inside the selected folder exceeds 5 GB, the upload will be blocked with an error message
+- The ZIP compression may reduce the final file size significantly, depending on content type
+- Large media files (videos, images) may not compress much, while text-based files will compress substantially
+
+## Upload Modes
+
+| Mode | Description |
+|------|-------------|
+| File | Upload a single file of any size (standard upload) |
+| Folder | Upload an entire folder as a ZIP archive (max 5 GB) |
+
+## Technical Details
+
+- **Client-Side Zipping**: Folder contents are zipped in the browser using the JSZip library before upload begins
+- **Directory Structure Preserved**: The original folder structure is preserved inside the ZIP archive
+- **Progress Tracking**: Real-time upload progress is shown during the ZIP upload, just like regular file uploads
+- **Chunked Upload**: The ZIP file is uploaded using the same reliable chunked upload system that supports large files
+
+## Tips
+
+- For best performance, avoid uploading folders with thousands of very small files — the zipping process may take a moment
+- If your folder is close to the 5 GB limit, consider removing unnecessary files before uploading
+- The ZIP file will be named after the original folder name (e.g., \`MyFolder.zip\`)
+    `,
+    subsections: [
+      { id: "how-it-works", title: "How It Works" },
+      { id: "size-limit", title: "Size Limit" },
+      { id: "upload-modes", title: "Upload Modes" },
+      { id: "technical-details", title: "Technical Details" },
+      { id: "tips", title: "Tips" },
     ],
   },
   security: {
@@ -539,6 +619,175 @@ python app.py
     subsections: [
       { id: "server-workflow", title: "Server Workflow" },
       { id: "client-workflow", title: "Client Workflow" },
+    ],
+  },
+  "join-permissions": {
+    id: "join-permissions",
+    title: "Join Permissions",
+    icon: "UserCheck",
+    content: `
+# Client Join Permission System
+
+Control who can access your file transfer session with a built-in approval workflow. Every client must request permission before joining.
+
+## How It Works
+
+When a client navigates to the server URL, they are no longer given immediate access. Instead, a structured join flow is followed:
+
+### Step 1 — Client Enters Name
+
+The client is presented with a **"Join File Transfer"** dialog. They must enter their name and click **OK** to submit a join request.
+
+- The dialog displays a user icon, a name input field, and an OK button
+- The client's name is required — they cannot proceed without it
+
+### Step 2 — Waiting for Approval
+
+After submitting, the client sees a **"Waiting for approval..."** screen with:
+
+- A loading spinner animation
+- Their submitted name displayed in a badge
+- A message: *"Your request has been sent to the dashboard. Please wait for the host to approve your access."*
+
+The client stays on this screen until the host (dashboard) takes action.
+
+### Step 3 — Dashboard Receives Join Request
+
+On the **Dashboard** side, a **"Join Requests"** panel appears showing:
+
+- The client's name (e.g., "Priyankl wants to join")
+- The client's IP address
+- The timestamp of the request
+- A notification badge showing the number of pending requests
+- An audio notification sound when a new request arrives
+
+### Step 4 — Accept or Reject
+
+The dashboard controller has two options for each request:
+
+| Action | Result |
+|--------|--------|
+| Approve (green button) | Client is granted access and redirected to the main interface |
+| Reject (red button) | Client is denied access and shown a rejection message |
+
+## Request History
+
+All join requests — both accepted and rejected — are logged in the system:
+
+- **Accepted clients**: Name, IP, and approval timestamp are recorded
+- **Rejected clients**: Name, IP, and rejection timestamp are recorded
+- The history is included in the session log file generated on server shutdown
+
+## Kicked Clients
+
+If a client is **kicked** by the dashboard:
+
+- All their actions are immediately disabled on their side
+- They are taken back to the name entry screen
+- They must re-enter their name and wait for re-approval
+- The dashboard can choose to approve or reject their re-entry
+
+## Security Benefits
+
+- **Controlled Access**: No unauthorized users can access your files
+- **Identity Tracking**: Every user is identified by name, making activity logs more meaningful
+- **Real-Time Moderation**: Instantly approve or deny access as requests come in
+- **Audit Trail**: Full history of who requested access and what decision was made
+    `,
+    subsections: [
+      { id: "how-it-works", title: "How It Works" },
+      { id: "request-history", title: "Request History" },
+      { id: "kicked-clients", title: "Kicked Clients" },
+      { id: "security-benefits", title: "Security Benefits" },
+    ],
+  },
+  "file-browser": {
+    id: "file-browser",
+    title: "File Management",
+    icon: "LayoutGrid",
+    content: `
+# File Browser
+
+A dedicated file management interface accessible via the **"Open All"** button. Browse, search, sort, and interact with all uploaded files in a visual grid layout.
+
+## Overview
+
+The File Browser provides a modern, visual way to manage and access all files on the server. It opens as a separate page and displays files as icon cards in a grid — similar to a desktop file manager.
+
+## Interface Elements
+
+### Header Bar
+
+- **Title**: "File Browser" label on the left
+- **Item Count**: Badge showing total number of files (e.g., "10 Items")
+- **Refresh Button**: Reload the file list to see new uploads
+- **Back Button**: Return to the previous page
+
+### Search & Filter Controls
+
+- **Search Bar**: Type to search files by name — results filter in real-time as you type
+- **Sort Options**: Dropdown to sort files by:
+  - Name A → Z
+  - Name Z → A
+  - Size (largest first)
+  - Size (smallest first)
+  - Date (newest first)
+  - Date (oldest first)
+- **Type Filter**: Dropdown to filter by file type:
+  - All Types
+  - Images (.png, .jpg, .webp)
+  - Videos (.mp4, .mkv, .avi)
+  - Documents (.pdf, .doc, .txt)
+  - Archives (.zip, .rar, .7z)
+  - Audio (.mp3, .wav, .flac)
+  - Other
+
+### File Grid
+
+Files are displayed as cards with:
+
+- **File Type Icon**: Color-coded icons based on file extension
+  - Orange — Video files
+  - Red — PDF and document files
+  - Gray — Archive/ZIP files
+  - Green — Image files
+  - Blue — Code/JSON files
+- **File Name**: Displayed below each icon (truncated if too long)
+
+## Actions by Role
+
+The available actions differ based on whether you are on the **Dashboard** (admin/server) or the **Client** side:
+
+### Dashboard Actions
+
+| Action | Description |
+|--------|-------------|
+| Download | Download any file to your device |
+| Info | View detailed file information (size, uploader, upload time, download count, download history) |
+| Delete | Permanently remove a file from the server |
+
+### Client Actions
+
+| Action | Description |
+|--------|-------------|
+| Download | Download any file to your device |
+| Info | View file information (size, uploader, upload time) |
+
+> **Note**: Clients cannot delete files — only the dashboard admin has delete permissions.
+
+## Tips
+
+- Use the search bar for quick file lookup in large collections
+- Combine sort and type filter for precise file discovery
+- Use the refresh button after new uploads to update the file list
+- Right-click on a file to check who uploaded it and how many times it has been downloaded
+    `,
+    subsections: [
+      { id: "overview", title: "Overview" },
+      { id: "interface-elements", title: "Interface Elements" },
+      { id: "actions-by-role", title: "Actions by Role" },
+      { id: "interaction-methods", title: "Interaction Methods" },
+      { id: "tips", title: "Tips" },
     ],
   },
   "search-engine": {

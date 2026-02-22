@@ -126,8 +126,8 @@ const DocContent = () => {
         const text = line.slice(3);
         const id = generateSlug(text);
         elements.push(
-          <h2 
-            key={`h2-${i}`} 
+          <h2
+            key={`h2-${i}`}
             id={id}
             className="text-xl font-semibold mb-3 mt-8 pt-6 border-t border-border text-foreground scroll-mt-20"
           >
@@ -142,8 +142,8 @@ const DocContent = () => {
         const text = line.slice(4);
         const id = generateSlug(text);
         elements.push(
-          <h3 
-            key={`h3-${i}`} 
+          <h3
+            key={`h3-${i}`}
             id={id}
             className="text-lg font-semibold mb-2 mt-6 text-foreground scroll-mt-20"
           >
@@ -192,6 +192,30 @@ const DocContent = () => {
           </div>
         );
         i = j;
+        continue;
+      }
+
+      // Images ![alt](src)
+      const imageMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+      if (imageMatch) {
+        const alt = imageMatch[1];
+        const src = imageMatch[2];
+        elements.push(
+          <div key={`img-${i}`} className="my-6">
+            <div className="rounded-lg overflow-hidden border border-border bg-secondary/30">
+              <img
+                src={src}
+                alt={alt}
+                className="w-full h-auto object-contain max-h-[500px]"
+                loading="lazy"
+              />
+            </div>
+            {alt && (
+              <p className="text-sm text-muted-foreground text-center mt-2 italic">{alt}</p>
+            )}
+          </div>
+        );
+        i++;
         continue;
       }
 
@@ -298,6 +322,27 @@ const DocContent = () => {
         continue;
       }
 
+      // Blockquotes
+      if (line.startsWith("> ")) {
+        const quoteText = line.slice(2);
+        const parsed = quoteText.split(/(\*\*.*?\*\*|`.*?`)/g).map((part, pIdx) => {
+          if (part.startsWith("**") && part.endsWith("**")) {
+            return <strong key={pIdx} className="text-foreground">{part.slice(2, -2)}</strong>;
+          }
+          if (part.startsWith("`") && part.endsWith("`")) {
+            return <code key={pIdx} className="code-inline">{part.slice(1, -1)}</code>;
+          }
+          return part;
+        });
+        elements.push(
+          <blockquote key={`bq-${i}`} className="my-4 pl-4 border-l-4 border-primary/50 bg-primary/5 rounded-r-lg py-3 pr-4">
+            <p className="text-muted-foreground">{parsed}</p>
+          </blockquote>
+        );
+        i++;
+        continue;
+      }
+
       // Empty lines
       if (line.trim() === "") {
         i++;
@@ -339,7 +384,7 @@ const DocContent = () => {
 
       {/* Title */}
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">{doc.title}</h1>
-      
+
       {/* Description if available */}
       <p className="text-muted-foreground text-lg mb-8">
         {doc.content.split('\n').find(line => line.trim() && !line.startsWith('#'))?.trim()}

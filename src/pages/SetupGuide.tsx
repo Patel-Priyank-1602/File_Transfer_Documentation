@@ -1,4 +1,4 @@
-import { Github, ArrowLeft, Terminal, Download, Play, Settings, CheckCircle2, AlertCircle, Copy, ExternalLink, Folder, FileCode, Server, Wifi, Package, MapPin, Sliders, FolderTree, Network, Power, ShieldCheck, LayoutDashboard, QrCode } from "lucide-react";
+import { Github, ArrowLeft, Terminal, Download, Play, Settings, CheckCircle2, AlertCircle, Copy, ExternalLink, Folder, FileCode, Server, Wifi, Package, MapPin, Sliders, FolderTree, Network, Power, ShieldCheck, LayoutDashboard, QrCode, CheckCircle, FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 
@@ -29,7 +29,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: Package ,
+            icon: Package,
             title: "Install Dependencies",
             description: "Install all required Python packages...",
             command: "pip install -r requirements.txt",
@@ -40,7 +40,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: MapPin ,
+            icon: MapPin,
             title: "Find Your IP Address",
             description: "Locate your local network IP address so other devices can connect to your server.",
             command: "ipconfig   // Windows\nifconfig   // macOS / Linux",
@@ -53,7 +53,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: Sliders ,
+            icon: Sliders,
             title: "Environment Configuration",
             description: "Create a `.env` file in the project root and configure the application settings.",
             command: "# --- Network / Hotspot Settings ---\nHOTSPOT_SSID=YourHotspotName\nHOTSPOT_PASSWORD=YourHotspotPassword\nHOTSPOT_IP=YourHotspotIP\nPORT=8000\n\n# --- Admin Credentials ---\nADMIN_USERNAME=admin\nADMIN_PASSWORD=your_secure_password\n\n# --- Application Settings ---\nSECRET_KEY=change_this_to_a_random_secure_value\nUPLOAD_FOLDER=shared_files",
@@ -76,7 +76,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: Network ,
+            icon: Network,
             title: "Configure Network Connection",
             description: "Choose your network type and configure the application accordingly.",
             hasOptions: true,
@@ -108,7 +108,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: Power ,
+            icon: Power,
             title: "Start the Server",
             description: "Launch the FileTransfer server and make it accessible on your local network.",
             image: "/setup/rng.webp",
@@ -122,7 +122,7 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: ShieldCheck ,
+            icon: ShieldCheck,
             title: "Login to the Admin Dashboard",
             description: "Access the admin panel to manage users, files, and system activity.",
             image: "/setup/login.webp",
@@ -134,10 +134,10 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: LayoutDashboard ,
+            icon: LayoutDashboard,
             title: "Open Admin Dashboard",
             description: "Use the FileTransfer Admin Dashboard to manage users, files, and monitor system activity.",
-            image: "/setup/server.webp",
+            image: "/setup/dash.png",
             tips: [
                 "Step 1: Connect devices using the **Connect to Hotspot** QR code (skip this if already on the same network)",
                 "Step 2: Connect client devices using the **Open File Server** QR code or copy the file server URL shown at the top of the File Management page",
@@ -146,15 +146,39 @@ const SetupGuide = () => {
             ]
         },
         {
-            icon: QrCode ,
+            icon: QrCode,
             title: "Open Client Dashboard using QR Code or URL",
             description: "Access the FileTransfer Client Dashboard to upload, download, and manage shared files.",
-            image: "/setup/client.webp",
+            image: "/setup/permi.png",
             tips: [
-                "Before opening the client dashboard, you will see a login page — enter the credentials from your `.env` file and provide a display name",
+                "Before opening the client dashboard, you will see a login page — enter your name, then send a request to the dashboard for approval and wait until it is approved",
                 "For complete usage instructions and advanced features, refer to the FileTransfer Client documentation at **lftdocs.netlify.app**"
             ]
         },
+        {
+            icon: CheckCircle,
+            title: "Access Client Dashboard After Approval",
+            description: "Once your request is approved from the dashboard side, you can access the client dashboard.",
+            image: "/setup/client.png",
+            tips: [
+                "After sending your request, wait for approval from the dashboard",
+                "Once approved, the client dashboard will open automatically or allow access",
+                "You can now upload, download, and manage shared files",
+                "Make sure you are using the correct credentials from your `.env` file if prompted"
+            ]
+        },
+        {
+            icon: FolderOpen,
+            title: "Access File Management Page",
+            description: "Open the File Management page from both the dashboard and client side to manage all shared files.",
+            image: "/setup/openall.png",
+            tips: [
+                "On both the dashboard and client side, locate the 'Open All' button",
+                "Click on the 'Open All' button to access the File Management page",
+                "This page allows you to view, upload, download, and manage all shared files",
+                "Use filters or search options to quickly find specific files if needed"
+            ]
+        }
     ];
 
     const requirements = [

@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { 
-  ChevronDown, 
-  ChevronRight, 
-  Home, 
-  Download, 
-  Settings, 
-  Layers, 
-  Zap, 
-  Upload, 
-  Shield, 
-  BookOpen, 
-  Search, 
-  UserCog, 
-  Code, 
-  Gauge, 
-  FileText, 
-  RefreshCw, 
-  HelpCircle, 
+import {
+  ChevronDown,
+  ChevronRight,
+  Home,
+  Download,
+  Settings,
+  Layers,
+  Zap,
+  Upload,
+  Shield,
+  BookOpen,
+  Search,
+  UserCog,
+  Code,
+  Gauge,
+  FileText,
+  RefreshCw,
+  HelpCircle,
   Map,
+  FolderUp,
+  UserCheck,
+  LayoutGrid,
   LucideIcon
 } from "lucide-react";
 import { navigation } from "@/data/documentation";
@@ -41,6 +44,9 @@ const iconMap: Record<string, LucideIcon> = {
   RefreshCw,
   HelpCircle,
   Map,
+  FolderUp,
+  UserCheck,
+  LayoutGrid,
 };
 
 interface DocSidebarProps {
@@ -51,7 +57,7 @@ const DocSidebar = ({ onNavigate }: DocSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentSection = location.pathname.replace("/docs/", "") || "introduction";
-  
+
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() => {
     const expanded: Record<string, boolean> = {};
     navigation.forEach((cat) => {
@@ -92,12 +98,12 @@ const DocSidebar = ({ onNavigate }: DocSidebarProps) => {
               <ChevronRight className="h-3 w-3" />
             )}
           </button>
-          
+
           {expandedCategories[category.category] && (
             <div className="relative mt-1 space-y-0.5 animate-fade-in ml-4 pl-3">
               {/* Vertical line - starts after the category header */}
               <div className="absolute left-0 top-3 bottom-0 w-0.5 bg-border" />
-              
+
               {category.items.map((item) => (
                 <button
                   key={item.id}
