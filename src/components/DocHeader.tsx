@@ -73,14 +73,56 @@ const DocHeader = () => {
 
     <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-auto">
       <DialogHeader>
-        <DialogTitle>FileTransfer Architecture</DialogTitle>
+      <DialogTitle>FileTransfer Architecture</DialogTitle>
       </DialogHeader>
 
-      <img
-        src="/File_Transfer.png"
-        alt="FileTransfer Architecture"
-        className="w-full h-auto rounded-lg border"
-      />
+      {(() => {
+      const [zoom, setZoom] = useState(1);
+      const minZoom = 0.5;
+      const maxZoom = 3;
+
+      return (
+        <div className="relative">
+        <div className="flex items-center gap-2 mb-2">
+          <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setZoom((z) => Math.max(minZoom, z - 0.25))}
+          disabled={zoom <= minZoom}
+          >
+          −
+          </Button>
+          <span className="text-sm font-medium min-w-[4ch] text-center">
+          {Math.round(zoom * 100)}%
+          </span>
+          <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setZoom((z) => Math.min(maxZoom, z + 0.25))}
+          disabled={zoom >= maxZoom}
+          >
+          +
+          </Button>
+          <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setZoom(1)}
+          >
+          Reset
+          </Button>
+        </div>
+
+        <div className="overflow-auto max-h-[70vh] border rounded-lg">
+          <img
+          src="/LFT.png"
+          alt="FileTransfer Architecture"
+          className="h-auto rounded-lg transition-transform duration-200 origin-top-left"
+          style={{ transform: `scale(${zoom})`, width: `${100}%` }}
+          />
+        </div>
+        </div>
+      );
+      })()}
     </DialogContent>
   </Dialog>
 </div>
